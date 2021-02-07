@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 const LoaderWrapper = styled.div`
   text-align: center;
+  position: bottom;
 
   .lds-ellipsis {
     display: inline-block;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Header from "./components/Header";
 import Loader from "./components/Loader";
 import Unsplash from "./components/Unsplash";
@@ -6,7 +6,8 @@ import axios from "axios";
 import styled from "styled-components";
 import { TextField } from "@material-ui/core";
 import { createGlobalStyle } from "styled-components";
-import InfiniteScroll from "react-infinite-scroller";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { SRLWrapper } from "simple-react-lightbox";
 
 // Style - Globalstyles applied to the main app page
 const GlobalStyle = createGlobalStyle`
@@ -17,7 +18,7 @@ const GlobalStyle = createGlobalStyle`
  }
 
  body {
-   font-family: 'Roboto', sans-serif;
+   font-family: 'Montserrat', sans-serif;
  }
 `;
 
@@ -30,6 +31,7 @@ const WrapperImage = styled.section`
   grid-template-columns: repeat(5, 1fr);
   grid-auto-rows: 350px;
   grid-gap: 15px;
+  cursor: pointer;
 `;
 
 const WrapperForm = styled.div`
@@ -41,9 +43,24 @@ const WrapperForm = styled.div`
   padding: 20px;
 `;
 
+const styles = {
+  root: {
+    background: "white",
+  },
+
+  input: {
+    color: "white",
+  },
+};
+
 function App() {
   const [value, setValue] = useState("");
   const [images, setImages] = useState([]);
+
+  // useRef, whenever you change value doesnt rerender the page, and not async
+
+  const referenceImages = useRef([]);
+  const referenceCount = useRef(0);
 
   // useEffect(() => {
   //   fetchImages(images);
@@ -62,6 +79,10 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    referenceImages.current = [];
+
+    referenceCount.current = 0;
+
     fetchImages();
   };
 
@@ -69,14 +90,19 @@ function App() {
     const apiRoot = "https://api.unsplash.com/";
     // const accessKey = process.env.REACT_APP_ACCESSKEY;
 
-    console.log("hello");
+    referenceCount.current = referenceCount.current + 1;
+
     axios
       .get(
-        `${apiRoot}search/photos/?client_id=ut3_Brs_RQleWmiVdYUo02-5jZ0Dj0s_vfKLY258lIQ&page=1&query=${value}&count=10`
+        `${apiRoot}search/photos/?client_id=ut3_Brs_RQleWmiVdYUo02-5jZ0Dj0s_vfKLY258lIQ&page=${referenceCount.current}&query=${value}`
       )
-      .then((response) => setImages([...images, ...response.data.results]));
-
-    setValue("");
+      .then((response) => {
+        setImages([...referenceImages.current, ...response.data.results]);
+        referenceImages.current = [
+          ...referenceImages.current,
+          ...response.data.results,
+        ];
+      });
   };
 
   return (
@@ -93,23 +119,27 @@ function App() {
             onChange={handleChange}
             fullWidth={true}
             variant="outlined"
-            color="primary"
-            label="Enter Search"
+            autofocus={true}
+            label="Search Here"
           ></TextField>
         </WrapperForm>
       </form>
+
       <InfiniteScroll
         dataLength={images.length} //This is important field to render the next data
         next={fetchImages}
         hasMore={true}
-        loader={<h4>Loading...</h4>}
+        // loader={<Loader />}
         scrollThreshold="200px"
+        style={{ overflow: "visible" }}
       >
-        <WrapperImage>
-          {images.map((image) => (
-            <Unsplash url={image.urls.regular} key={image.id} alt="" />
-          ))}
-        </WrapperImage>
+        <SRLWrapper>
+          <WrapperImage>
+            {images.map((image) => (
+              <Unsplash url={image.urls.regular} key={image.id} alt="" />
+            ))}
+          </WrapperImage>
+        </SRLWrapper>
       </InfiniteScroll>
     </>
   );

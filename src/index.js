@@ -1,10 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
+import SimpleReactLightbox from "simple-react-lightbox";
 
 ReactDOM.render(
-  <React.StrictMode>
+  <SimpleReactLightbox>
     <App />
-  </React.StrictMode>,
+  </SimpleReactLightbox>,
+
   document.getElementById("root")
 );

@@ -15,6 +15,7 @@ const Header = () => {
     <div>
       <HeaderStyle>
         <h1> Unsplash Image Search with Infinite Scrolling </h1>
+
         <br />
         <h3> The internet's source of freely-usable images </h3>
       </HeaderStyle>
