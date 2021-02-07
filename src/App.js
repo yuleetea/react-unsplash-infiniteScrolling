@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import Header from "./components/Header";
 import Loader from "./components/Loader";
 import Unsplash from "./components/Unsplash";
@@ -146,10 +146,3 @@ function App() {
 }
 
 export default App;
-
-//{hasMore && <div ref={loaderRef}>Loading…</div>}
-// example of conditional redering
-// {hasMore}={true} && <Loader />
-
-// the only time i see the Loading... is when i manually type in another entry, so its not automatically rendering when i scroll to the bottom
-// however the InfiniteScroll component is working when i submit a query??? DO i have to then keep sending that exact query?
